@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+
+[tool.setuptools.packages.find]
+include = ["tidyselect"]
+
+[tool.pytest.ini_options]
+markers = []
+testpaths = ["tidyselect/tests"]
+
+[project]
+name = "tidyselect"
+authors = [{name="Michael Chow", email="michael.chow@posit.co"}]
+license.file = "LICENSE"
+description = "Helpers for selecting columns of data"
+readme = "README.md"
+keywords = []
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11"
+]
+dynamic = ["version"]
+requires-python = ">=3.9"
+dependencies = [
+]
+
+[project.urls]
+homepage = "https://machow.github.io/tidyselect"
+repository = "https://github.com/machow/tidyselect"
+ci = "https://github.com/machow/tidyselect/actions"
+
+
+[project.optional-dependencies]
+dev = ["pytest", "jupyterlab", "pre-commit"]
+
