@@ -40,5 +40,5 @@ ci = "https://github.com/machow/tidyselect/actions"
 
 
 [project.optional-dependencies]
-dev = ["pytest", "jupyterlab", "pre-commit"]
+dev = ["pytest", "jupyterlab", "pre-commit", "polars", "pandas", "siuba"]
 

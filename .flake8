@@ -1,0 +1,8 @@
+[flake8]
+exclude = docs, test_*, .flake8, examples
+max-line-length = 90
+ignore =
+    # line before binary operator
+    W503,
+    # redefinition of unused function name
+    F811
