@@ -52,3 +52,8 @@ def test_selectors_invert():
 def test_selectors_everything():
     op = sel.everything()
     assert op.eval(["ab", "bb"]) == sel.NamesMatch([0, 1])
+
+
+def test_selectors_where():
+    op = sel.where(lambda col: isinstance(col, int))
+    assert op.eval([1, "b"]) == sel.NamesMatch([0])

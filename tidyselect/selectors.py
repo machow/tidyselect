@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import Callable, Union
+from typing import Any, Callable, Union
 from typing_extensions import Concatenate, ParamSpec, Self, TypeVar
 from ._dispatch import dispatch
 
@@ -11,6 +11,7 @@ from ._dispatch import dispatch
 P = ParamSpec("P")
 T = TypeVar("T")
 OperationFunction = Callable[Concatenate["Names", P], "NamesMatch"]
+OperationPredicate = Callable[[Any], bool]
 
 
 # Misc ----
@@ -125,7 +126,12 @@ class VarList(VarOperation):
 class VarPredicate(VarBase):
     """A selection predicate."""
 
-    def eval(self, names: list[str]) -> list[bool]:
+    expr: OperationPredicate
+
+    def __init__(self, expr: OperationPredicate):
+        self.expr = expr
+
+    def eval(self, columns: list[Any]) -> NamesMatch:
         """Return a boolean list of matching names, based on data.
 
         Parameters
@@ -133,7 +139,7 @@ class VarPredicate(VarBase):
         names:
             Names to select from.
         """
-        raise NotImplementedError()
+        return NamesMatch([ii for ii, col in enumerate(columns) if self.expr(col)])
 
 
 # VarOperation classes -------------------------------------------------------
@@ -289,3 +295,20 @@ def everything(data=NoArgs) -> VarOperationFunc:
 @dispatch
 def everything(self: Names) -> NamesMatch:
     return NamesMatch(list(range(len(self))))
+
+
+# where ----
+
+# TODO: should type : Callable[[ColumnLike], bool]
+
+
+def where(predicate) -> VarPredicate:
+    """Select variables based on a predicate.
+
+    Parameters
+    ----------
+    predicate:
+        A function that takes a column and returns a boolean.
+    """
+
+    return VarPredicate(predicate)

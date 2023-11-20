@@ -46,12 +46,13 @@ from typing import TYPE_CHECKING, Union  # noqa
 
 
 if TYPE_CHECKING:
-    from pandas import DataFrame as PdDataFrame
-    from polars import DataFrame as PlDataFrame
+    from pandas import DataFrame as PdDataFrame, Series as PdSeries
+    from polars import DataFrame as PlDataFrame, Series as PlSeries
     from polars import Expr as PlExpr
     from siuba.siu import Call, Symbolic
 
     SbLazy = Union[Call, Symbolic]
+    ColumnLike = Union[PdSeries, PlSeries]
 else:
 
     class PdDataFrame(AbstractBackend):
