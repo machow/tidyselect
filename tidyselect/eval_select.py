@@ -1,10 +1,14 @@
 from collections.abc import Mapping
-from typing import Type, Union
+from typing import List, Type, Union, Tuple
+from typing_extensions import TypeAlias
 
 from ._databackends import PdDataFrame, PlDataFrame, PlExpr, SbLazy
 from ._dispatch import dispatch
+from .selectors import VarBase
 
-DataLike = Union[PdDataFrame, PlDataFrame, Mapping]
+
+DataLike: TypeAlias = Union[PdDataFrame, PlDataFrame, Mapping]
+NamePosList: TypeAlias = List[Tuple[str, int]]
 
 # Utils -----------------------------------------------------------------------
 
@@ -62,7 +66,7 @@ def eval_select(expr, data: DataLike):
 
 
 @dispatch
-def eval_select(expr: str, data: DataLike):
+def eval_select(expr: str, data: DataLike) -> NamePosList:
     if expr in get_names(data):
         return [(expr, 0)]
 
@@ -70,7 +74,7 @@ def eval_select(expr: str, data: DataLike):
 
 
 @dispatch
-def eval_select(expr: SbLazy, data: DataLike):
+def eval_select(expr: SbLazy, data: DataLike) -> NamePosList:
     from siuba.dply.tidyselect import var_select, var_create
     from siuba.siu import strip_symbolic
 
@@ -83,7 +87,7 @@ def eval_select(expr: SbLazy, data: DataLike):
 
 
 @dispatch
-def eval_select(expr: PlExpr, data: DataLike):
+def eval_select(expr: PlExpr, data: DataLike) -> NamePosList:
     from polars.selectors import _selector_proxy_
 
     # Note that currently a list is supported, since list dispatching
@@ -101,7 +105,14 @@ def eval_select(expr: PlExpr, data: DataLike):
 
 
 @dispatch
-def eval_select(expr: list, data: DataLike):
+def eval_select(expr: VarBase, data: DataLike) -> NamePosList:
+    names = get_names(data)
+
+    return [(names[ii], ii) for ii in expr.eval(names)]
+
+
+@dispatch
+def eval_select(expr: list, data: DataLike) -> NamePosList:
     for entry in expr:
         cls_style = expr_style(entry)
         if cls_style is not UnknownStyle:

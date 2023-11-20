@@ -60,6 +60,9 @@ class NamesMatch(list[int]):
 class VarBase:
     """Basic selection class."""
 
+    def eval(self, names: list[str]) -> NamesMatch:
+        raise NotImplementedError()
+
 
 class VarOperation(VarBase):
     """A selection operation."""
