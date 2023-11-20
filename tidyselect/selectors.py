@@ -1,14 +1,33 @@
 from __future__ import annotations
 
+from functools import wraps
 from typing import Callable, Union
-from typing_extensions import Concatenate, ParamSpec, Self
+from typing_extensions import Concatenate, ParamSpec, Self, TypeVar
 from ._dispatch import dispatch
 
 
 # Types ----
 
 P = ParamSpec("P")
+T = TypeVar("T")
 OperationFunction = Callable[Concatenate["Names", P], "NamesMatch"]
+
+
+# Misc ----
+class NoArgs:
+    """Represent first argument to generic called without arguments."""
+
+
+def support_no_args(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        # Case 1: no arguments -----
+        if not len(args):
+            return f(NoArgs(), *args, **kwargs)
+
+        return f(*args, **kwargs)
+
+    return wrapped
 
 
 # Data ----
@@ -251,3 +270,19 @@ def contains(x: str) -> VarOperationFunc:
 @dispatch
 def contains(self: Names, x: str) -> NamesMatch:
     return NamesMatch([ii for ii, name in enumerate(self) if x in name])
+
+
+# everything ----
+
+
+@support_no_args
+@dispatch
+def everything(data=NoArgs) -> VarOperationFunc:
+    """Select all variables."""
+
+    return VarOperationFunc(everything)
+
+
+@dispatch
+def everything(self: Names) -> NamesMatch:
+    return NamesMatch(list(range(len(self))))
