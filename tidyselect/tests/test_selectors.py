@@ -3,11 +3,7 @@ import pytest
 import tidyselect.selectors as sel
 
 
-PARAMS = [
-    (sel.starts_with, [1]),
-    (sel.ends_with, [0]),
-    (sel.contains, [0, 1])
-]
+PARAMS = [(sel.starts_with, [1]), (sel.ends_with, [0]), (sel.contains, [0, 1])]
 
 
 @pytest.mark.parametrize("func, dst", PARAMS)

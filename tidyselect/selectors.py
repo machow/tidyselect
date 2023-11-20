@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Union, overload
+from typing import Callable, Union
 from typing_extensions import Concatenate, ParamSpec, Self
 from ._dispatch import dispatch
 
@@ -109,10 +109,13 @@ class VarPredicate(VarBase):
 
 # VarOperation classes -------------------------------------------------------
 
+
 class VarOperationFunc(VarOperation):
     """A selection operation."""
 
-    def __init__(self, expr: OperationFunction, args: tuple = tuple(), kwargs: dict | None = None):
+    def __init__(
+        self, expr: OperationFunction, args: tuple = tuple(), kwargs: dict | None = None
+    ):
         self.expr = expr
         self.args = args
         self.kwargs = {} if kwargs is None else kwargs
@@ -160,6 +163,7 @@ class VarOperationOr(VarOperation):
 
 # c ----
 
+
 # TODO: should type : str | VarOperation
 # but because we have singledispatch register based on annotation, and
 # it expects a single type, it's having a bad time.
@@ -179,6 +183,7 @@ def c(self: Names, *args: Union[str, VarOperation]) -> NamesMatch:
 
 # starts_with ----
 
+
 @dispatch
 def starts_with(x: str) -> VarOperationFunc:
     """Select variables starting with a prefix.
@@ -187,7 +192,7 @@ def starts_with(x: str) -> VarOperationFunc:
     ----------
     x:
         Prefix to match.
-    
+
     Notes
     -----
     If passed a Names object, then this returns a list of integers corresponding
@@ -204,6 +209,7 @@ def starts_with(self: Names, x: str) -> NamesMatch:
 
 # ends_with ----
 
+
 @dispatch
 def ends_with(x: str) -> VarOperationFunc:
     """Select variables ending with a prefix."""
@@ -217,6 +223,7 @@ def ends_with(self: Names, x: str) -> NamesMatch:
 
 
 # contains ----
+
 
 @dispatch
 def contains(x: str) -> VarOperationFunc:

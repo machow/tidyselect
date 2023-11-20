@@ -42,10 +42,10 @@ class AbstractBackend(metaclass=_AbstractBackendMeta):
 
 # Implementations ----
 
-import typing
+from typing import TYPE_CHECKING, Union  # noqa
 
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from pandas import DataFrame as PdDataFrame
     from polars import DataFrame as PlDataFrame
     from polars import Expr as PlExpr
@@ -53,18 +53,15 @@ if typing.TYPE_CHECKING:
 
     SbLazy = Union[Call, Symbolic]
 else:
+
     class PdDataFrame(AbstractBackend):
         _backends = [("pandas", "DataFrame")]
-
-
 
     class PlDataFrame(AbstractBackend):
         _backends = [("polars", "DataFrame")]
 
-
     class PlExpr(AbstractBackend):
         _backends = [("polars", "Expr")]
-
 
     class SbLazy(AbstractBackend):
         _backends = [("siuba.siu", "Call"), ("siuba.siu", "Symbolic")]
