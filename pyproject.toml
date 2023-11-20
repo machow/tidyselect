@@ -46,6 +46,6 @@ dev = [
     "pre-commit",
     "polars",
     "pandas",
-    "quartodoc==0.6.6",
+    "quartodoc==0.7.1",
     "siuba"
 ]
