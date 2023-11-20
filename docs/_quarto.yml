@@ -17,5 +17,4 @@ quartodoc:
     - title: Functions
       desc: ''
       contents:
-        - name: eval_select
-          dynamic: true
+        - eval_select.eval_select
