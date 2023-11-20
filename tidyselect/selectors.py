@@ -19,7 +19,7 @@ class Names(list[str]):
 
 
 class NamesMatch(list[int]):
-    """A list of names, with a boolean mask."""
+    """A list of integers corresponding to a selection."""
 
     def __and__(self, rhs: NamesMatch) -> Self:
         # maintains order based on left-hand side
@@ -29,6 +29,10 @@ class NamesMatch(list[int]):
     def __or__(self, rhs: NamesMatch) -> Self:
         lhs_set = set(self)
         return NamesMatch([*self, *(el for el in rhs if el not in lhs_set)])
+
+    def __invert__(self):
+        # TODO: if we kept the max length, we could invert.
+        raise NotImplementedError("Cannot invert a NamesMatch directly.")
 
 
 # Var classes -----------------------------------------------------------------
@@ -58,6 +62,9 @@ class VarOperation(VarBase):
 
     def __or__(self, x: "VarOperation"):
         return VarOperationOr(self, x)
+
+    def __invert__(self) -> VarOperationInvert:
+        return VarOperationInvert(self)
 
 
 class VarList(VarOperation):
@@ -154,6 +161,15 @@ class VarOperationOr(VarOperation):
         rhs_pos = self.rhs.eval(names)
 
         return lhs_pos | rhs_pos
+
+
+class VarOperationInvert(VarOperation):
+    def __init__(self, op: VarOperation):
+        self.op = op
+
+    def expr(self, names: list[str]) -> NamesMatch:
+        to_exclude = set(self.op.eval(names))
+        return NamesMatch([ii for ii, _ in enumerate(names) if ii not in to_exclude])
 
 
 # VarPredicate classes ---------------------------------------------------------

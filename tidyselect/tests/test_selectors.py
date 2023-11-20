@@ -42,3 +42,8 @@ def test_selectors_c_selectors():
     op = sel.c(sel.starts_with("a"), sel.ends_with("b"))
 
     assert op.eval(["ab", "bb", "xy"]) == sel.NamesMatch([0, 1])
+
+
+def test_selectors_invert():
+    op = ~sel.c("ab")
+    assert op.eval(["ab", "bb", "xy"]) == sel.NamesMatch([1, 2])
