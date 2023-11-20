@@ -3,11 +3,7 @@ import pytest
 import tidyselect.selectors as sel
 
 
-PARAMS = [
-    (sel.starts_with, [1]),
-    (sel.ends_with, [0]),
-    (sel.contains, [0, 1])
-]
+PARAMS = [(sel.starts_with, [1]), (sel.ends_with, [0]), (sel.contains, [0, 1])]
 
 
 @pytest.mark.parametrize("func, dst", PARAMS)
@@ -46,3 +42,18 @@ def test_selectors_c_selectors():
     op = sel.c(sel.starts_with("a"), sel.ends_with("b"))
 
     assert op.eval(["ab", "bb", "xy"]) == sel.NamesMatch([0, 1])
+
+
+def test_selectors_invert():
+    op = ~sel.c("ab")
+    assert op.eval(["ab", "bb", "xy"]) == sel.NamesMatch([1, 2])
+
+
+def test_selectors_everything():
+    op = sel.everything()
+    assert op.eval(["ab", "bb"]) == sel.NamesMatch([0, 1])
+
+
+def test_selectors_where():
+    op = sel.where(lambda col: isinstance(col, int))
+    assert op.eval([1, "b"]) == sel.NamesMatch([0])
